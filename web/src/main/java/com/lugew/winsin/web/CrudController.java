@@ -16,7 +16,8 @@ import java.util.List;
  * @author 夏露桂
  * @since 2021/1/15 15:36
  */
-public abstract class CrudController<T extends Entity<ID>, S extends Service<T, ID>, ID extends Serializable> extends AbstractController<T, S, ID> {
+public abstract class CrudController<T extends Entity<ID>, S extends Service<T, ID>, ID extends Serializable>
+        extends AbstractController<T, S, ID> implements com.lugew.winsin.core.controller.CrudController<T, ID> {
 
     @PostMapping({"/getList"})
     public List<T> getList(@RequestBody T entity) {
