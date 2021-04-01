@@ -1,6 +1,7 @@
 package com.lugew.winsin.web.configuration;
 
 import com.lugew.winsin.web.advice.GlobalRestfulResponseBodyAdvice;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.context.annotation.Bean;
 
 /**
@@ -9,11 +10,11 @@ import org.springframework.context.annotation.Bean;
  * @author 夏露桂
  * @since 2021/1/19 19:11
  */
+@AutoConfigureAfter(ExceptionConfigurationSupporter.class)
 public class RestfulRConfiguration {
     @Bean
     public GlobalRestfulResponseBodyAdvice globalRestfulResponseBodyAdvice(
-            @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
-                    ExceptionConfigurationSupporter exceptionConfigurationSupporter) {
+            ExceptionConfigurationSupporter exceptionConfigurationSupporter) {
         return new GlobalRestfulResponseBodyAdvice(exceptionConfigurationSupporter);
     }
 }

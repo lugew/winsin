@@ -2,6 +2,7 @@ package com.lugew.winsin.web.configuration;
 
 import com.lugew.winsin.core.exception.Exception;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 
@@ -10,7 +11,6 @@ import org.springframework.context.annotation.Bean;
  * @since 2021/1/21 11:05
  */
 
-@AutoConfigureAfter({RConfiguration.class})
 @ConditionalOnMissingBean(ExceptionConfigurationSupporter.class)
 public class ExceptionAutoConfiguration {
     @Bean
