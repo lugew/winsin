@@ -1,10 +1,8 @@
 package com.lugew.winsin.web.advice;
 
-import com.lugew.winsin.core.Error;
 import com.lugew.winsin.core.exception.Exception;
 import com.lugew.winsin.web.Standard;
 import com.lugew.winsin.web.configuration.ExceptionConfigurationSupporter;
-import com.lugew.winsin.web.response.R;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpStatus;
@@ -34,20 +32,13 @@ public class GlobalResponseBodyAdvice extends GlobalRestfulResponseBodyAdvice {
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.OK)
     public Object exceptionHandle(Exception e) {
-        return R.builder()
-                .code(e.getKey())
-                .message(getExceptionConfigurationSupporter().getMessage(e))
-                .build();
+        return super.exceptionHandle(e);
     }
 
     @ExceptionHandler(java.lang.Exception.class)
     @ResponseStatus(HttpStatus.OK)
     public Object exceptionHandle(java.lang.Exception e) {
-        return R.builder()
-                .code(Error.INTERNAL_SERVER_ERROR.getCode())
-                .data(e.getMessage())
-                .message(Error.INTERNAL_SERVER_ERROR.getValue())
-                .build();
+        return super.exceptionHandle(e);
     }
 
     @Override
