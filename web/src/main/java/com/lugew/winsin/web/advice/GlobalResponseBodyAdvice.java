@@ -7,11 +7,13 @@ import com.lugew.winsin.web.configuration.ExceptionConfigurationSupporter;
 import com.lugew.winsin.web.response.R;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.MethodParameter;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 /**
@@ -30,6 +32,7 @@ public class GlobalResponseBodyAdvice extends GlobalRestfulResponseBodyAdvice {
     }
 
     @ExceptionHandler(Exception.class)
+    @ResponseStatus(HttpStatus.OK)
     public Object exceptionHandle(Exception e) {
         return R.builder()
                 .code(e.getKey())
@@ -38,6 +41,7 @@ public class GlobalResponseBodyAdvice extends GlobalRestfulResponseBodyAdvice {
     }
 
     @ExceptionHandler(java.lang.Exception.class)
+    @ResponseStatus(HttpStatus.OK)
     public Object exceptionHandle(java.lang.Exception e) {
         return R.builder()
                 .code(Error.INTERNAL_SERVER_ERROR.getCode())
