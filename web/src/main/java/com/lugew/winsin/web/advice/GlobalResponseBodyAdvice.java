@@ -5,7 +5,6 @@ import com.lugew.winsin.core.exception.Exception;
 import com.lugew.winsin.web.Standard;
 import com.lugew.winsin.web.configuration.ExceptionConfigurationSupporter;
 import com.lugew.winsin.web.response.R;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
@@ -14,7 +13,6 @@ import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
 /**
  * 全局JSON返回值拦截器
@@ -25,16 +23,17 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
  */
 @Slf4j
 @RestControllerAdvice(annotations = {Standard.class})
-@RequiredArgsConstructor
-public class GlobalResponseBodyAdvice implements ResponseBodyAdvice<Object> {
+public class GlobalResponseBodyAdvice extends GlobalRestfulResponseBodyAdvice {
 
-    private final ExceptionConfigurationSupporter exceptionConfigurationSupporter;
+    public GlobalResponseBodyAdvice(ExceptionConfigurationSupporter exceptionConfigurationSupporter) {
+        super(exceptionConfigurationSupporter);
+    }
 
     @ExceptionHandler(Exception.class)
     public Object exceptionHandle(Exception e) {
         return R.builder()
                 .code(e.getKey())
-                .message(exceptionConfigurationSupporter.getMessage(e))
+                .message(getExceptionConfigurationSupporter().getMessage(e))
                 .build();
     }
 
@@ -47,41 +46,8 @@ public class GlobalResponseBodyAdvice implements ResponseBodyAdvice<Object> {
                 .build();
     }
 
-    /**
-     * 对R/ResponseEntity类型返回值不做处理
-     */
-    @Override
-    public boolean supports(MethodParameter returnType, Class<? extends HttpMessageConverter<?>> converterType) {
-        return isNotR(returnType) && isNotResponseEntity(returnType);
-    }
-
     @Override
     public Object beforeBodyWrite(Object body, MethodParameter returnType, MediaType selectedContentType, Class<? extends HttpMessageConverter<?>> selectedConverterType, ServerHttpRequest request, ServerHttpResponse response) {
         return com.lugew.winsin.web.response.R.builder().data(body).build();
     }
-
-    public boolean isResponseEntity(MethodParameter returnType) {
-        return "org.springframework.http.ResponseEntity".equals(returnType.getParameterType().getName());
-    }
-
-    private boolean isNotResponseEntity(MethodParameter returnType) {
-        return !isResponseEntity(returnType);
-    }
-
-    public boolean isVoid(MethodParameter returnType) {
-        return "java.lang.Void".equals(returnType.getParameterType().getName());
-    }
-
-    private boolean notJSON(MediaType selectedContentType) {
-        return !selectedContentType.includes(MediaType.APPLICATION_JSON);
-    }
-
-    private boolean isR(MethodParameter returnType) {
-        return "com.lugew.winsin.web.response.R".equals(returnType.getParameterType().getName());
-    }
-
-    private boolean isNotR(MethodParameter returnType) {
-        return !isR(returnType);
-    }
-
 }
