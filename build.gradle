@@ -22,7 +22,7 @@ allprojects {
     apply plugin: 'java-library'
 
     group = 'com.lugew.winsin'
-    version = '1.2.4'
+    version = '1.2.5'
     sourceCompatibility = '11'
     targetCompatibility = '11'
 
