@@ -12,7 +12,6 @@ ext {
     aspectjVersion = "1.9.6"
     byteBuddyVersion = "1.10.19"
     objenesisVersion = "3.1"
-
 }
 
 
@@ -25,6 +24,7 @@ allprojects {
     version = '1.2.9'
     sourceCompatibility = '11'
     targetCompatibility = '11'
+
 
     repositories {
         mavenLocal()
@@ -46,6 +46,27 @@ subprojects {
     apply plugin: 'io.spring.dependency-management'
     apply plugin: 'maven'
 
+    uploadArchives {
+        repositories {
+            mavenDeployer {
+                repository(url: 'https://packages.aliyun.com/maven/repository/2091508-release-wPuZ2a/') {
+                    authentication(
+                            userName: '6066bcc76d822d6b0188fa23',
+                            password: ']9lNg]s0yrS-'
+                    )
+                }
+                snapshotRepository(url: 'https://packages.aliyun.com/maven/repository/2091508-snapshot-I4cDr5/') {
+                    authentication(
+                            userName: '6066bcc76d822d6b0188fa23',
+                            password: ']9lNg]s0yrS-'
+                    )
+                }
+                pom.version = project.version
+                pom.artifactId = project.name
+                pom.groupId = project.group
+            }
+        }
+    }
     dependencies {
         implementation(
                 "com.google.guava:guava:${guavaVersion}"
