@@ -5,7 +5,6 @@ import com.lugew.winsin.core.exception.Exception;
 import com.lugew.winsin.web.Standard;
 import com.lugew.winsin.web.configuration.ExceptionConfigurationSupporter;
 import com.lugew.winsin.web.response.R;
-import jakarta.persistence.RollbackException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.MethodParameter;
@@ -18,6 +17,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
+import javax.persistence.RollbackException;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
