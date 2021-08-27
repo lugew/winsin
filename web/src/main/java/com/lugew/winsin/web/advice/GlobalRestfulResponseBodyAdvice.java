@@ -17,6 +17,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+
 /**
  * 全局RESTful JSON返回值拦截器
  * 注意，当返回值是String不支持，使用时尽量避免String作为返回值
@@ -48,6 +51,27 @@ public class GlobalRestfulResponseBodyAdvice implements ResponseBodyAdvice<Objec
                 .data(e.getMessage())
                 .message(Error.INTERNAL_SERVER_ERROR.getValue())
                 .build();
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    @ResponseStatus
+    public Object exceptionHandle(ConstraintViolationException e) {
+        return R.builder()
+                .code(Error.INTERNAL_SERVER_ERROR.getCode())
+                .data(extractExceptionMessage(e))
+                .message(Error.INTERNAL_SERVER_ERROR.getValue())
+                .build();
+    }
+
+    private String extractExceptionMessage(ConstraintViolationException e) {
+        StringBuilder result = new StringBuilder();
+        for (ConstraintViolation<?> constraintViolation : e.getConstraintViolations()) {
+            result.append("属性路径：").append(constraintViolation.getPropertyPath())
+                    .append("参数值：").append(constraintViolation.getInvalidValue())
+                    .append("信息：").append(constraintViolation.getMessage())
+                    .append("；\n");
+        }
+        return result.toString();
     }
 
     /**
