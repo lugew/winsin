@@ -5,6 +5,7 @@ import com.lugew.winsin.core.exception.Exception;
 import com.lugew.winsin.web.Standard;
 import com.lugew.winsin.web.configuration.ExceptionConfigurationSupporter;
 import com.lugew.winsin.web.response.R;
+import jakarta.persistence.RollbackException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.MethodParameter;
@@ -46,6 +47,11 @@ public class GlobalRestfulResponseBodyAdvice implements ResponseBodyAdvice<Objec
     @ExceptionHandler(java.lang.Exception.class)
     @ResponseStatus
     public Object exceptionHandle(java.lang.Exception e) {
+        if (e.getCause() instanceof RollbackException) {
+            if (e.getCause().getCause() instanceof ConstraintViolationException) {
+                return exceptionHandle((ConstraintViolationException) e.getCause().getCause());
+            }
+        }
         return R.builder()
                 .code(Error.INTERNAL_SERVER_ERROR.getCode())
                 .data(e.getMessage())
