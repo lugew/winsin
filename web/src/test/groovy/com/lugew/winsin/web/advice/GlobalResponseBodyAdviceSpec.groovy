@@ -7,10 +7,7 @@ import org.hibernate.validator.internal.engine.ConstraintViolationImpl
 import org.hibernate.validator.internal.engine.path.PathImpl
 import org.springframework.core.MethodParameter
 import org.springframework.http.ResponseEntity
-import spock.lang.Narrative
-import spock.lang.Shared
-import spock.lang.Specification
-import spock.lang.Subject
+import spock.lang.*
 
 import javax.validation.ConstraintViolation
 import javax.validation.ConstraintViolationException
@@ -55,45 +52,53 @@ class GlobalResponseBodyAdviceSpec extends Specification {
         Object.class         || true
     }
 
-    def 'jpa检验类的错误需提示属性路径、值和错误信息'() {
+    @Unroll("属性：name.name，值：#value，信息：#information")
+    def 'jpa检验类的错误需提示属性、值和错误信息'() {
         given: '初始化异常'
-        Set<ConstraintViolation> constraintViolations = new HashSet<ConstraintViolation>() {
-            {
-                add(ConstraintViolationImpl.forBeanValidation(
-                        null,
-                        null,
-                        null,
-                        "不能为null",
-                        null,
-                        null,
-                        null,
-                        "123",
-                        PathImpl.createPathFromString("name.name"),
-                        null,
-                        null
-                ))
-
-            }
+        ConstraintViolationImpl constraintViolationImpl = ConstraintViolationImpl.forBeanValidation(
+                null,
+                null,
+                null,
+                information as String,
+                null,
+                null,
+                null,
+                value,
+                PathImpl.createPathFromString("name.name"),
+                null,
+                null
+        ) as ConstraintViolationImpl
+        Set<ConstraintViolation> constraintViolations = new HashSet<ConstraintViolation>()
+        constraintViolations.with {
+            add(constraintViolationImpl)
         }
         ConstraintViolationException constraintViolationException =
                 new ConstraintViolationException(constraintViolations)
+
+        JSONObject jsonObject = new JSONObject()
+        jsonObject.with {
+            put("属性", 'name.name')
+            put("值", value)
+            put("信息", information)
+        }
+        JSONArray jsonArray = new JSONArray()
+        jsonArray.with {
+            add(jsonObject)
+        }
+
+
         when: '捕获异常'
         R<JSONArray> result = globalResponseBodyAdvice.exceptionHandle(constraintViolationException) as R<JSONArray>
+
         then: '抛出信息'
         with(result) {
             message == "校验失败"
-            data == new JSONArray() {
-                {
-                    add(new JSONObject() {
-                        {
-                            put("属性", "name.name")
-                            put("值", "123")
-                            put("信息", "不能为null")
-                        }
-                    })
-                }
-            }
+            data == jsonArray
             code == "validate.failed"
         }
+        where:
+        value | information
+        '123' | '123'
+        null  | null
     }
 }

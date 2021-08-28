@@ -77,7 +77,7 @@ public class GlobalRestfulResponseBodyAdvice implements ResponseBodyAdvice<Objec
         for (ConstraintViolation<?> constraintViolation : e.getConstraintViolations()) {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("属性", constraintViolation.getPropertyPath().toString());
-            jsonObject.put("值", constraintViolation.getInvalidValue().toString());
+            jsonObject.put("值", constraintViolation.getInvalidValue());
             jsonObject.put("信息", constraintViolation.getMessage());
             jsonArray.add(jsonObject);
         }
