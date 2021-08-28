@@ -1,5 +1,7 @@
 package com.lugew.winsin.web.advice;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.lugew.winsin.core.Error;
 import com.lugew.winsin.core.exception.Exception;
 import com.lugew.winsin.web.Standard;
@@ -63,21 +65,23 @@ public class GlobalRestfulResponseBodyAdvice implements ResponseBodyAdvice<Objec
     @ResponseStatus
     public Object exceptionHandle(ConstraintViolationException e) {
         return R.builder()
-                .code(Error.INTERNAL_SERVER_ERROR.getCode())
+                .code(Error.VALIDATE_FAILED.getCode())
                 .data(extractExceptionMessage(e))
-                .message(Error.INTERNAL_SERVER_ERROR.getValue())
+                .message(Error.VALIDATE_FAILED.getValue())
                 .build();
     }
 
-    private String extractExceptionMessage(ConstraintViolationException e) {
-        StringBuilder result = new StringBuilder();
+    private JSONArray extractExceptionMessage(ConstraintViolationException e) {
+        JSONArray jsonArray = new JSONArray();
+
         for (ConstraintViolation<?> constraintViolation : e.getConstraintViolations()) {
-            result.append("属性路径：").append(constraintViolation.getPropertyPath())
-                    .append("参数值：").append(constraintViolation.getInvalidValue())
-                    .append("信息：").append(constraintViolation.getMessage())
-                    .append("；\n");
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("属性", constraintViolation.getPropertyPath().toString());
+            jsonObject.put("值", constraintViolation.getInvalidValue().toString());
+            jsonObject.put("信息", constraintViolation.getMessage());
+            jsonArray.add(jsonObject);
         }
-        return result.toString();
+        return jsonArray;
     }
 
     /**

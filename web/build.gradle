@@ -6,6 +6,8 @@ bootJar {
 }
 
 dependencies {
+
+    implementation 'com.alibaba:fastjson:1.2.78'
     api(
             project(":core"),
             'org.springframework.boot:spring-boot-starter',

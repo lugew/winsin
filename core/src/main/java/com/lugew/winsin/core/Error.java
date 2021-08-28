@@ -11,7 +11,10 @@ public enum Error {
     USER_NOT_FOUND("user.not.found", "用户不存在"),
     UPLOAD_FAILED("upload.failed", "上传失败"),
     DELETE_FAILED("delete.failed", "删除失败"),
-    NOT_FOUND("not.found", "未找到");
+    NOT_FOUND("not.found", "未找到"),
+
+    VALIDATE_FAILED("validate.failed", "校验失败"),
+    ;
 
     private String code;
     private final String value;

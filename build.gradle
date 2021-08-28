@@ -4,8 +4,8 @@ plugins {
 }
 ext {
     guavaVersion = "30.0-jre"
-    spockVersion = "2.0-M4-groovy-3.0"
-    groovyVersion = "3.0.6"
+    spockVersion = "2.0-groovy-3.0"
+    groovyVersion = "3.0.8"
     springCloudVersion = "Hoxton.SR9"
     lombokVersion = "1.18.16"
     openapiVersion = "1.5.2"
@@ -21,7 +21,7 @@ allprojects {
     apply plugin: 'java-library'
 
     group = 'com.lugew.winsin'
-    version = '1.2.13'
+    version = '1.2.14'
     sourceCompatibility = '11'
     targetCompatibility = '11'
 
@@ -41,10 +41,10 @@ allprojects {
 }
 
 subprojects {
+    apply plugin: 'maven'
     apply plugin: 'groovy'
     apply plugin: 'org.springframework.boot'
     apply plugin: 'io.spring.dependency-management'
-    apply plugin: 'maven'
 
     uploadArchives {
         repositories {
@@ -79,11 +79,10 @@ subprojects {
                 "org.projectlombok:lombok:${lombokVersion}"
         )
         testImplementation(
-                "org.codehaus.groovy:groovy-all:${groovyVersion}",
-                "org.codehaus.groovy:groovy:${groovyVersion}",
                 "org.spockframework:spock-core:${spockVersion}",
-                "net.bytebuddy:byte-buddy:${byteBuddyVersion}",
-                "org.objenesis:objenesis:${objenesisVersion}",
+                "org.spockframework:spock-core:${spockVersion}",
+                "org.codehaus.groovy:groovy:${groovyVersion}",
+
         )
     }
 }
